@@ -1,0 +1,33 @@
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Set cron_service fact if available
+  ansible.builtin.set_fact:
+    cron_service: "{{ item }}"
+  loop:
+    - crond.service
+    - cron.service
+  when: item in ansible_facts.services
+
+- name: Fail if cron service is not found
+  ansible.builtin.fail:
+    msg: "Cron service not found on the remote host!"
+  when: cron_service is not defined
+
+- name: Start and enable service using systemd
+  ansible.builtin.systemd:
+    name: "{{ cron_service }}"
+    state: started
+    enabled: yes
+  when: 
+    - ansible_service_mgr == "systemd"
+    - not ansible_check_mode
+
+- name: Start and enable service using service module
+  ansible.builtin.service:
+    name: "{{ cron_service }}"
+    state: started
+    enabled: yes
+  when: 
+    - ansible_service_mgr != "systemd"
+    - not ansible_check_mode

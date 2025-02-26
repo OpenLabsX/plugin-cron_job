@@ -1,0 +1,46 @@
+- name: List installed pacakges
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Set cron package name to install based on OS family
+  ansible.builtin.set_fact:
+    cron_pkg: "{{ 'cron' if ansible_facts['os_family'] == 'Debian' else 'cronie' }}"
+
+- name: Package cron already exists
+  ansible.builtin.debug:
+    msg: "Cron already installed!"
+  when: "cron_pkg in ansible_facts.packages"
+
+- name: Install cron package
+  when: "'cron' not in ansible_facts.packages"
+  block:
+  - name: Update apt cache
+    ansible.builtin.apt:
+      update_cache: yes
+    when: 
+      - ansible_facts.pkg_mgr == 'apt'
+      - not ansible_check_mode
+
+  - name: Update yum or dnf cache
+    ansible.builtin.dnf:
+      update_cache: yes
+    when: 
+      - ansible_facts.pkg_mgr in ['yum', 'dnf']
+      - not ansible_check_mode
+
+  - name: Install package providing cron
+    ansible.builtin.package:
+      name: "{{ cron_pkg }}"
+      state: present
+    when: not ansible_check_mode
+
+  - name: Verify cron is now available
+    ansible.builtin.package_facts:
+      manager: auto
+
+  - name: Fail if cron is still not available
+    ansible.builtin.fail:
+      msg: "crontab command is still missing after installation!"
+    when:
+      - "cron_pkg not in ansible_facts.packages"
+      - not ansible_check_mode

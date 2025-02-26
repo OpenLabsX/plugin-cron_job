@@ -1,0 +1,9 @@
+---
+- name: Cron job 'ls' as 'root'
+  hosts: all
+
+  roles:
+    - role: openlabs.cron_job
+  vars:
+    cron_job_command: "ls / > /tmp/output.txt"
+    cron_job_user: root

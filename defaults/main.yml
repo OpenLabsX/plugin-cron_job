@@ -1,0 +1,10 @@
+---
+# Cron job configuration
+cron_job_name: "Installed by openlabs.cron_job ansible plugin."
+
+# Cron job timing
+cron_job_minute: "*"
+cron_job_hour: "*"
+cron_job_day: "*"
+cron_job_month: "*"
+cron_job_weekday: "*"

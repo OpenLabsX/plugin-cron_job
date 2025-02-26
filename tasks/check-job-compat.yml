@@ -1,0 +1,20 @@
+- name: Extract first part of cron job
+  ansible.builtin.set_fact:
+    base_command: "{{ cron_job_command.split()[0] }}"
+
+- name: Check if cron command exists
+  ansible.builtin.command: "which {{ base_command }}"
+  register: which_result
+  ignore_errors: true
+  changed_when: false
+  check_mode: false # Allow execution in check mode
+
+- name: Check if cron script exists
+  ansible.builtin.stat:
+    path: "{{ base_command }}"
+  register: file_stat
+
+- name: Display warning if cron job command/script is missing
+  ansible.builtin.debug:
+    msg: "WARNING: Cron command/script '{{ base_command }}' is NOT found. The cron job might fail!"
+  when: which_result.rc != 0 and not file_stat.stat.exists

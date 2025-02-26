@@ -1,0 +1,11 @@
+---
+# Variable configuration
+- name: Check cron_job_command is defined
+  ansible.builtin.fail:
+    msg: "Variable: cron_job_command is undefined!"
+  when: cron_job_command is not defined
+
+- name: Check cron_job_user is defined
+  ansible.builtin.fail:
+    msg: "Variable: cron_job_user is undefined!"
+  when: cron_job_user is not defined

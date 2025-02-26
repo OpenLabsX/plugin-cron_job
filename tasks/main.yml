@@ -1,0 +1,21 @@
+---
+# Verify variables are set
+- ansible.builtin.include_tasks: variables.yml
+
+# Check if target user exists
+- ansible.builtin.include_tasks: check-user.yml
+
+# Check cron package is installed
+- ansible.builtin.include_tasks: install-cron.yml
+
+# Start and enable the cron service
+- ansible.builtin.include_tasks: start-cron-service.yml
+
+# Check cron job to see if it's compatible with system configuration
+- ansible.builtin.include_tasks: check-job-compat.yml
+
+# Install cron job
+- ansible.builtin.include_tasks: install-job.yml
+
+# Let user know they are in check mode
+- ansible.builtin.include_tasks: check-mode-msg.yml

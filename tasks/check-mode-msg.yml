@@ -1,0 +1,4 @@
+- name: Display check mode warning
+  ansible.builtin.debug:
+    msg: "Check mode is enabled! No changes were made."
+  when: ansible_check_mode

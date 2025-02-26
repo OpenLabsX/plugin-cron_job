@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  role_name: cron_job
+  author: openlabs
+  description: Install an arbitrary cron job on a supported Linux distrobution.
+  license:  GPL-3.0-or-later
+  min_ansible_version: "2.18"

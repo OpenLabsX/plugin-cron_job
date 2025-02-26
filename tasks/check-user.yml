@@ -1,0 +1,16 @@
+- name: Check if user exists using getent
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ cron_job_user }}"
+  register: user_info
+
+- name: Fail if user does not exist
+  ansible.builtin.fail:
+    msg: "User '{{ cron_job_user }}' does NOT exist! Can't install cron job!"
+  when: 
+    - not user_info.ansible_facts.get('getent_passwd', {}).get(cron_job_user) 
+    - not ansible_check_mode 
+
+- name: Display success message if user exists
+  ansible.builtin.debug:
+    msg: "User '{{ cron_job_user }}' exists."
